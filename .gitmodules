@@ -1,6 +1,9 @@
 [submodule "src/gtsam"]
 	path = src/gtsam
 	url = https://github.com/brycetford/gtsam.git
-[submodule "src/mavros"]
-	path = src/mavros
-	url = https://github.com/brycetford/mavros.git
+[submodule "src/px4_msgs"]
+	path = src/px4_msgs
+	url = https://github.com/PX4/px4_msgs.git
+[submodule "src/px4_ros_com"]
+	path = src/px4_ros_com
+	url = https://github.com/PX4/px4_ros_com.git
