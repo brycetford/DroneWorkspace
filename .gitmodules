@@ -4,6 +4,3 @@
 [submodule "src/px4_msgs"]
 	path = src/px4_msgs
 	url = https://github.com/PX4/px4_msgs.git
-[submodule "sim/PX4-Autopilot"]
-	path = sim/PX4-Autopilot
-	url = https://github.com/brycetford/PX4-Autopilot.git

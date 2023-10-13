@@ -32,5 +32,21 @@ services:
       dockerfile: docker/Dockerfile
       target: overlay
 
-  gztest:
+  # Developer container
+  dev:
     extends: overlay
+    image: droneworkspace:dev
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: dev
+      args:
+        - UID=${UID:-1000}
+        - GID=${UID:-1000}
+        - USERNAME=${USERNAME:-devuser}
+    volumes:
+      - ./firmware/PX4-Autopilot:/firmware/PX4-Autopilot/:rw
+      - ./src/gtsam:/DroneWorkspace/src/gtsam:rw
+      - ./src/px4_msgs:/DroneWorkspace/px4_msgs:rw
+    user: ${USERNAME:-devuser}
+    command: sleep infinity
