@@ -3,6 +3,6 @@
 **/__pycache__/
 
 
-firmware/
+PX4-Autopilot/
 build/
 log/

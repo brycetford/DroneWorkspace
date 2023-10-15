@@ -84,11 +84,11 @@ ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 #################
 FROM base AS overlay
 
-RUN mkdir -p /DroneWorkpace/src
+RUN mkdir -p /DroneWorkspace/src
 RUN mkdir /firmware
 
-COPY ./src/gtsam/ /DroneWorkpace/src
-COPY ./src/px4_msgs/ /DroneWorkpace/src
+COPY ./src/gtsam /DroneWorkspace/src
+COPY ./src/px4_msgs /DroneWorkspace/src
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
