@@ -46,7 +46,7 @@ services:
         - USERNAME=${USERNAME:-devuser}
     volumes:
       - ./firmware/PX4-Autopilot:/firmware/PX4-Autopilot/:rw
-      - ./src/gtsam:/DroneWorkspace/src/gtsam:rw
+      - ./src/gtsam:/DroneWorkspace/gtsam:rw
       - ./src/px4_msgs:/DroneWorkspace/px4_msgs:rw
     user: ${USERNAME:-devuser}
     command: sleep infinity

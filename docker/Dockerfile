@@ -75,6 +75,12 @@ RUN wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pk
 # Some QT-Apps/Gazebo don't not show controls without this
 ENV QT_X11_NO_MITSHM 1
 
+# Remove display warnings
+RUN mkdir /tmp/runtime-root
+ENV XDG_RUNTIME_DIR "/tmp/runtime-root"
+RUN chmod -R 0700 /tmp/runtime-root
+ENV NO_AT_BRIDGE 1
+
 # create and start as LOCAL_USER_ID
 COPY /docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
@@ -84,11 +90,8 @@ ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 #################
 FROM base AS overlay
 
-RUN mkdir -p /DroneWorkspace/src
+RUN mkdir -p /DroneWorkspace
 RUN mkdir /firmware
-
-COPY ./src/gtsam /DroneWorkspace/src
-COPY ./src/px4_msgs /DroneWorkspace/src
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
@@ -114,6 +117,12 @@ RUN groupadd --gid $GID $USERNAME \
  && mkdir -p /home/${USERNAME} \
  && chown -R ${UID}:${GID} /home/${USERNAME}
 
+ # Set the ownership of the overlay workspace to the new user
+RUN chown -R ${UID}:${GID} /DroneWorkspace/
+
+# Add ros source to bashrc so it is set up for dec container
+RUN echo "source /opt/ros/humble/setup.bash" >> /home/${USERNAME}/.bashrc
+
 # Set the user and source entrypoint in the user's .bashrc file
 USER ${USERNAME}
-RUN echo "source /entrypoint.sh" >> /home/${USERNAME}/.bashrc
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
