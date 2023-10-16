@@ -13,6 +13,12 @@ fi
 source "/opt/ros/humble/setup.bash"
 echo "Sourced ROS 2 Humble"
 
+if [ -f /DroneWorkspace/install/setup.bash ]
+then
+  source /DroneWorkspace/install/setup.bash
+  echo "Sourced DroneWorkspace"
+fi
+
 # Use the LOCAL_USER_ID if passed in at runtime
 if [ -n "${LOCAL_USER_ID}" ]; then
 	echo "Starting with UID : $LOCAL_USER_ID"

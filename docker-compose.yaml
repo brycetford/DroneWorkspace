@@ -24,6 +24,7 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ${XAUTHORITY:-$HOME/.Xauthority}:/root/.Xauthority
 
+  # Overlay Container
   overlay:
     extends: base
     image: droneworkspace:overlay
