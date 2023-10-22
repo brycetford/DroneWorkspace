@@ -49,5 +49,6 @@ services:
       - ./firmware/PX4-Autopilot:/firmware/PX4-Autopilot/:rw
       - ./src/gtsam:/DroneWorkspace/gtsam:rw
       - ./src/px4_msgs:/DroneWorkspace/px4_msgs:rw
+      - ./src/gz_uas_sim:/DroneWorkspace/gz_uas_sim:rw
     user: ${USERNAME:-devuser}
     command: sleep infinity

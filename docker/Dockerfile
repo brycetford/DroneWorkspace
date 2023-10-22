@@ -21,7 +21,7 @@ RUN apt-get update \
 	&& apt-get clean autoclean \
 	&& rm -rf /var/lib/apt/lists/{apt,dpkg,cache,log} /tmp/* /var/tmp/*
 
-# install ros2 desktop
+# Install ros2 desktop & gz fortress
 RUN apt-get install --quiet --no-install-recommends -y \
 		ros-$ROS_DISTRO-desktop \
 		ros-$ROS_DISTRO-launch-testing-ament-cmake \
@@ -70,7 +70,8 @@ RUN rm -rf /usr/local/include/fastrtps /usr/local/share/fastrtps /usr/local/lib/
 RUN wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null \
     && apt-get --quiet --no-install-recommends -y update \
-    && apt-get --quiet --no-install-recommends -y install gz-garden
+    && apt-get --quiet --no-install-recommends -y install gz-garden \
+	&& apt-get --quiet --no-install-recommends -y install ros-$ROS_DISTRO-ros-gzgarden
 
 # Some QT-Apps/Gazebo don't not show controls without this
 ENV QT_X11_NO_MITSHM 1

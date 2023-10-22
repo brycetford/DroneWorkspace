@@ -4,3 +4,6 @@
 [submodule "src/px4_msgs"]
 	path = src/px4_msgs
 	url = https://github.com/PX4/px4_msgs.git
+[submodule "src/gz_uas_sim"]
+	path = src/gz_uas_sim
+	url = git@github.com:laddcs/gz_uas_sim.git
