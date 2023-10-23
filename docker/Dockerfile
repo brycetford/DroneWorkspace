@@ -120,6 +120,7 @@ RUN groupadd --gid $GID $USERNAME \
 
  # Set the ownership of the overlay workspace to the new user
 RUN chown -R ${UID}:${GID} /DroneWorkspace/
+RUN chown -R ${UID}:${GID} /firmware/
 
 # Add ros source to bashrc so it is set up for dec container
 RUN echo "source /opt/ros/humble/setup.bash" >> /home/${USERNAME}/.bashrc
