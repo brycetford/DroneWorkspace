@@ -82,6 +82,8 @@ ENV XDG_RUNTIME_DIR "/tmp/runtime-root"
 RUN chmod -R 0700 /tmp/runtime-root
 ENV NO_AT_BRIDGE 1
 
+
+
 # create and start as LOCAL_USER_ID
 COPY /docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
@@ -121,6 +123,7 @@ RUN groupadd --gid $GID $USERNAME \
  # Set the ownership of the overlay workspace to the new user
 RUN chown -R ${UID}:${GID} /DroneWorkspace/
 RUN chown -R ${UID}:${GID} /firmware/
+RUN chown -R ${UID}:${GID} /tmp/runtime-root/
 
 # Add ros source to bashrc so it is set up for dec container
 RUN echo "source /opt/ros/humble/setup.bash" >> /home/${USERNAME}/.bashrc
