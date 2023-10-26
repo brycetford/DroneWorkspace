@@ -66,12 +66,14 @@ RUN rm -rf /usr/local/include/fastrtps /usr/local/share/fastrtps /usr/local/lib/
 	&& make && make install \
 	&& ldconfig /usr/local/lib/
 
-# Install Gazebo Garden
+ENV GZ_VERSION garden
+
+# Install Gazebo Garden and ros_gz packages
 RUN wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null \
     && apt-get --quiet --no-install-recommends -y update \
-    && apt-get --quiet --no-install-recommends -y install gz-garden \
-	&& apt-get --quiet --no-install-recommends -y install ros-$ROS_DISTRO-ros-gzgarden
+	&& apt-get --quiet --no-install-recommends -y install lsb-release wget gnupg \
+    && apt-get --quiet --no-install-recommends -y install gz-${GZ_VERSION} ros-${ROS_DISTRO}-ros-gzgarden
 
 # Some QT-Apps/Gazebo don't not show controls without this
 ENV QT_X11_NO_MITSHM 1
@@ -81,8 +83,6 @@ RUN mkdir /tmp/runtime-root
 ENV XDG_RUNTIME_DIR "/tmp/runtime-root"
 RUN chmod -R 0700 /tmp/runtime-root
 ENV NO_AT_BRIDGE 1
-
-
 
 # create and start as LOCAL_USER_ID
 COPY /docker/entrypoint.sh /usr/local/bin/entrypoint.sh
@@ -123,7 +123,7 @@ RUN groupadd --gid $GID $USERNAME \
  # Set the ownership of the overlay workspace to the new user
 RUN chown -R ${UID}:${GID} /DroneWorkspace/
 RUN chown -R ${UID}:${GID} /firmware/
-RUN chown -R ${UID}:${GID} /tmp/runtime-root/
+RUN chown -R ${UID}:${GID} /tmp/runtime-root
 
 # Add ros source to bashrc so it is set up for dec container
 RUN echo "source /opt/ros/humble/setup.bash" >> /home/${USERNAME}/.bashrc
