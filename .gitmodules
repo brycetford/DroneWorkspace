@@ -1,9 +1,9 @@
-[submodule "src/gtsam"]
-	path = src/gtsam
-	url = https://github.com/brycetford/gtsam.git
 [submodule "src/px4_msgs"]
 	path = src/px4_msgs
 	url = https://github.com/PX4/px4_msgs.git
 [submodule "src/gz_uas_sim"]
 	path = src/gz_uas_sim
 	url = git@github.com:laddcs/gz_uas_sim.git
+[submodule "src/uas_test"]
+	path = src/uas_test
+	url = git@github.com:laddcs/uas_test.git
