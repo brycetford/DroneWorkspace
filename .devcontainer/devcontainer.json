@@ -16,7 +16,8 @@
             "extensions": [
                 "ms-vscode.cpptools",
                 "ms-python.python",
-                "nonanonno.vscode-ros2"
+                "nonanonno.vscode-ros2",
+                "ms-vscode.cmake-tools"
             ],
 
             // Container specific settings
