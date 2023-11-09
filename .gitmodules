@@ -4,6 +4,8 @@
 [submodule "src/gz_uas_sim"]
 	path = src/gz_uas_sim
 	url = git@github.com:laddcs/gz_uas_sim.git
+	branch = main
 [submodule "src/uas_test"]
 	path = src/uas_test
 	url = git@github.com:laddcs/uas_test.git
+	branch = main
