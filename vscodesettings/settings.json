@@ -1,4 +1,7 @@
 {
     "cmake.sourceDirectory": "/DroneWorkspace/uas_test/sam_demo/gtsam/cmake",
-    "cmake.configureOnOpen": true
+    "cmake.configureOnOpen": true,
+    "files.associations": {
+        "array": "cpp"
+    }
 }
