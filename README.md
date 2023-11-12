@@ -5,11 +5,10 @@ Pull the PX4 Ubuntu 22.04 dev image
 ```
 docker pull px4io/px4-dev-base-jammy
 ```
-
 This workspace creates a container overlays the PX4 firmware for sil.
 Clone the firmware with
-```
 
+```
 cd firmware
 git clone --recursive https://github.com/PX4/PX4-Autopilot.git
 ```
