@@ -31,6 +31,15 @@ RUN apt-get install --quiet --no-install-recommends -y \
 	&& apt-get clean autoclean \
 	&& rm -rf /var/lib/apt/lists/{apt,dpkg,cache,log} /tmp/* /var/tmp/*
 
+# Install Geographic Libs and Datasets
+RUN apt-get install --quiet --no-install-recommends -y \
+		geographiclib-tools \
+		libgeographic-dev \
+	&& geographiclib-get-geoids egm96-5 \
+	&& apt-get -y autoremove \
+	&& apt-get clean autoclean \
+	&& rm -rf /var/lib/apt/lists/{apt,dpkg,cache,log} /tmp/* /var/tmp/*
+
 # Install Python 3 packages needed for testing
 RUN pip3 install -U \
 		argcomplete \

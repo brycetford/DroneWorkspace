@@ -57,5 +57,8 @@ services:
       - ./src/uas_test:/DroneWorkspace/uas_test:rw
       # VSCode settings for container development
       - ./vscodesettings:/DroneWorkspace/.vscode:rw
+    ports:
+      # Forward port for running QGC locally
+      - 14570:14570
     user: ${USERNAME:-devuser}
     command: sleep infinity

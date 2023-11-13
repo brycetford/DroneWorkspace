@@ -6,7 +6,8 @@
                 "${default}",
                 "/opt/ros/humble/include/**",
                 "${workspaceFolder}/install/**",
-                "${workspaceFolder}/uas_test/sam_demo/sam_node/include"
+                "${workspaceFolder}/uas_test/sam_demo/sam_node/include/**",
+                "/usr/include/eigen3"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
