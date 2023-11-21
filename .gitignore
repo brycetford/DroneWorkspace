@@ -7,3 +7,5 @@ PX4-Autopilot/
 build/
 install/
 log/
+
+Mapping_DataSets/
