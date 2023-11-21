@@ -17,6 +17,7 @@
                 "ms-vscode.cpptools",
                 "ms-python.python",
                 "nonanonno.vscode-ros2",
+                "ms-iot.vscode-ros",
                 "ms-vscode.cmake-tools"
             ],
 

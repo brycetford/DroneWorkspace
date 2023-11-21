@@ -52,9 +52,7 @@ services:
         - USERNAME=${USERNAME:-devuser}
     volumes:
       - ./firmware/PX4-Autopilot:/firmware/PX4-Autopilot/:rw
-      - ./src/px4_msgs:/DroneWorkspace/px4_msgs:rw
-      - ./src/gz_uas_sim:/DroneWorkspace/gz_uas_sim:rw
-      - ./src/uas_test:/DroneWorkspace/uas_test:rw
+      - ./src:/DroneWorkspace:rw
       # VSCode settings for container development
       - ./vscodesettings:/DroneWorkspace/.vscode:rw
     ports:
