@@ -57,12 +57,31 @@ def writeVehicleOdometry(bagWriter, estimatorList, currentEstimator):
 
     for estimator in currentEstimator:
 
+        startTime = estimator[0]
+        endTime = estimator[1]
+        estimatorIndex = estimator[2]
+
         # Open the current estimator log 
-        with open(file=estimatorList[estimator[1]], mode='r', newline='') as csvfile:
+        with open(file=estimatorList[estimatorIndex], mode='r', newline='') as csvfile:
 
             reader = csv.DictReader(csvfile)
 
-            readerTimestamp = -1
+            # Read all rows and create Odometry msgs for rows in valid time range for active estimator
+            for row in reader:
+
+                if int(row['timestamp']) < startTime:
+                    continue
+
+                if int(row['timestamp']) > endTime:
+                    break
+
+                odometryMsgList.append(createOdometryMsg(row))
+
+
+def createOdometryMsg(row: dict) -> VehicleOdometry:
+    msg = VehicleOdometry()
+
+    return msg
 
 
 def writeVideo():
@@ -92,26 +111,37 @@ def main(csvPath: PurePosixPath, mp4Path: PurePosixPath, lineupTime: float):
     estimatorList = [estimatorStates_0, estimatorStates_1, estimatorStates_2, estimatorStates_3]
 
     # Get current estimator list
-    currentEstimator = []
     with open(file=estimatorSelectorStatus, mode='r', newline='') as csvfile:
 
         reader = csv.DictReader(csvfile)
 
-        estimator = -1
+        estimator = 0
+        timestamp = 0
+
+        newEstimator = 0
+        newTimestamp = 0
+
+        currentEstimator = []
 
         for row in reader:
             newEstimator = int(row['primary_instance'])
+            newTimestamp = int(row['timestamp'])
             if estimator != newEstimator:
                 currentEstimator.append(
-                    (int(row['timestamp']), newEstimator)
+                    (timestamp, newTimestamp, estimator)
                 )
                 estimator = newEstimator
+                timestamp = newTimestamp
+
+        currentEstimator.append(
+            (timestamp, newTimestamp, newEstimator)
+        )
             
     # Create Bagwriter
-    bagWriter = createBag(name)
+    #bagWriter = createBag(name)
 
     # Write Vehicle Odometry
-    writeVehicleOdometry(bagWriter, estimatorList, currentEstimator)
+    #writeVehicleOdometry(bagWriter, estimatorList, currentEstimator)
 
 
 if __name__ == "__main__":
