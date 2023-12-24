@@ -53,7 +53,8 @@ RUN pip3 install -U \
 		flake8-import-order \
 		flake8-quotes \
 		pytest-repeat \
-		pytest-rerunfailures
+		pytest-rerunfailures \ 
+		tqdm
 
 # bootstrap rosdep
 RUN rosdep init && rosdep update
