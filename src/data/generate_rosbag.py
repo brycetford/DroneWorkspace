@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 import numpy as np
 
-import cv2
+import cv2 as cv
 
 import rclpy
 from rclpy.serialization import serialize_message
@@ -68,7 +68,7 @@ def createBag(name):
     return writer
 
 
-def writeVehicleOdometry(bagWriter, estimatorList, currentEstimator):
+def writeVehicleOdometry(bagWriter: SequentialWriter, estimatorList, currentEstimator):
     
     print("Reading Vehicle Odometry")
 
@@ -111,7 +111,7 @@ def writeVehicleOdometry(bagWriter, estimatorList, currentEstimator):
         )
 
 
-def writeVehicleAttitude(bagWriter, vehicleAttitude):
+def writeVehicleAttitude(bagWriter: SequentialWriter, vehicleAttitude):
 
     print("Reading Vehicle Attitude")
 
@@ -138,7 +138,7 @@ def writeVehicleAttitude(bagWriter, vehicleAttitude):
         )
 
 
-def writeVehiclePosition(bagWriter, vehicleLocalPosition):
+def writeVehiclePosition(bagWriter: SequentialWriter, vehicleLocalPosition):
     
     print("Reading Vehicle Position")
 
@@ -168,8 +168,26 @@ def writeVideoTransform():
     pass
 
 
-def writeVideo():
-    pass
+def writeVideo(bagWriter: SequentialWriter, videoPath: PurePosixPath, lineUpTime: float, lineupFrame: int):
+
+    print("Reading Video")
+
+    # Open the video
+    videoReader = cv.VideoCapture(videoPath.as_posix())
+
+    # Get video framerate
+    frameRate = videoReader.get(cv.CAP_PROP_FPS)
+    print("Framerate: " + str(frameRate))
+
+    # Get the frame count
+    frameCount = int(videoReader.get(cv.CAP_PROP_FRAME_COUNT))
+
+    for frameId in tqdm(range(frameCount)): ret, frame = videoReader.read()
+
+
+    
+    # Close the video
+    videoReader.release()
 
 
 # Creates a vehicle odometry message using an ekf states log row
@@ -238,6 +256,7 @@ def createAttitudeMsg(row: dict) -> VehicleAttitude:
 
     return msg
 
+
 def createLocalPositionMsg(row: dict) -> VehicleLocalPosition:
 
     msg = VehicleLocalPosition()
@@ -267,11 +286,10 @@ def createLocalPositionMsg(row: dict) -> VehicleLocalPosition:
     msg.xy_global = bool(row['xy_global'])
     msg.z_global = bool(row['z_global'])
 
-
     return msg
 
 
-def main(csvPath: PurePosixPath, mp4Path: PurePosixPath, lineupTime: float):
+def main(csvPath: PurePosixPath, mp4Path: PurePosixPath, lineUpTime: float, lineUpFrame: int):
 
     # Get CSVs
     name = csvPath.stem
@@ -334,6 +352,8 @@ def main(csvPath: PurePosixPath, mp4Path: PurePosixPath, lineupTime: float):
 
     # Write Gimbal Transform
 
+    # Write Video
+    writeVideo(bagWriter, mp4Path, lineUpTime, lineUpFrame)
 
 if __name__ == "__main__":
 
@@ -343,12 +363,14 @@ if __name__ == "__main__":
     parser.add_argument('csvPath', type=str)
     parser.add_argument('mp4Path', type=str)
     parser.add_argument('lineupTime', type=float, default=0.0)
+    parser.add_argument('lineupFrame', type=int, default=0)
 
     args = parser.parse_args()
 
     csvPath = PurePosixPath(args.csvPath)
     mp4Path = PurePosixPath(args.mp4Path)
     lineupTime = args.lineupTime
+    lineupFrame = args.lineupFrame
 
     # Enter Main
-    main(csvPath, mp4Path, lineupTime)
+    main(csvPath, mp4Path, lineupTime, lineupFrame)
