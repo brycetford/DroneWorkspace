@@ -1,4 +1,5 @@
 import os
+import sys
 import csv
 import argparse
 from pathlib import PurePosixPath
@@ -16,7 +17,7 @@ from rosbag2_py._storage import StorageOptions, ConverterOptions, TopicMetadata
 
 from px4_msgs.msg import VehicleAttitude, VehicleLocalPosition, VehicleOdometry
 from sensor_msgs.msg import Image
-from geometry_msgs.msg import Quaternion
+from geometry_msgs.msg import QuaternionStamped
 
 # This script takes a set of csv names, a mp4 name, and an lineup time an creates a rosbag
 
@@ -56,7 +57,7 @@ def createBag(name):
     
     videoTransformTopic = TopicMetadata(
         name='/camera/transform',
-        type='geometry_msgs/msg/Quaternion',
+        type='geometry_msgs/msg/QuaternionStamped',
         serialization_format='cdr')
     
     writer.create_topic(odometryTopic)
@@ -164,8 +165,68 @@ def writeVehiclePosition(bagWriter: SequentialWriter, vehicleLocalPosition):
         )
 
 
-def writeVideoTransform():
-    pass
+def writeVideoTransform(bagWriter: SequentialWriter, vehicleAttitude, actuatorOutput):
+    
+    print("Constructung Gimbal Transform")
+
+    minPitchCommand = 1000
+    maxPitchCommand = 1500
+
+    minPitchAngle = -90
+    maxPitchAngle = 0
+
+    gimbalRotationMessageList = []
+
+    with open(file=actuatorOutput, mode='r', newline='') as csvfile:
+
+        reader = csv.DictReader(csvfile)
+
+        for row in reader:
+
+            gimablPitchCommand = float(row['output[4]'])
+
+            if gimablPitchCommand == 0.0: continue
+
+            # Linear interpolation between pitch command and pitch angle
+            gimbalPitchAngle = (gimablPitchCommand - minPitchCommand) / (maxPitchCommand - minPitchCommand) * (maxPitchAngle - minPitchAngle) + minPitchAngle
+
+            gimbalQ = np.zeros(4)
+
+            gimbalQ[0] = np.cos(0)*np.cos(gimbalPitchAngle/2)*np.cos(0) + np.sin(0)*np.sin(gimbalPitchAngle/2)*np.sin(0)
+            gimbalQ[1] = np.sin(0)*np.cos(gimbalPitchAngle/2)*np.cos(0) - np.cos(0)*np.sin(gimbalPitchAngle/2)*np.sin(0)
+            gimbalQ[2] = np.cos(0)*np.sin(gimbalPitchAngle/2)*np.cos(0) + np.sin(0)*np.cos(gimbalPitchAngle/2)*np.sin(0)
+            gimbalQ[3] = np.cos(0)*np.cos(gimbalPitchAngle/2)*np.sin(0) - np.sin(0)*np.sin(gimbalPitchAngle/2)*np.sin(0)
+
+            t = float(row['timestamp'])*1e-6
+            seconds = np.floor(t)
+            nanos = (t - seconds) * 1e9
+            
+            msg = QuaternionStamped()
+
+            # Relative rotation as quaternion
+            msg.quaternion.w = gimbalQ[0]
+            msg.quaternion.x = gimbalQ[1]
+            msg.quaternion.y = gimbalQ[2]
+            msg.quaternion.z = gimbalQ[3]
+
+            # Header info
+            msg.header.stamp.sec = int(seconds)
+            msg.header.stamp.nanosec = int(nanos)
+            msg.header.frame_id = 'body_camera'
+
+            gimbalRotationMessageList.append(msg)
+    
+    print("Writing Gimbal Transform to Bag:")
+
+    for msg in tqdm(gimbalRotationMessageList):    
+
+        nanos = msg.header.stamp.nanosec + int(msg.header.stamp.sec * 1e9)
+
+        bagWriter.write(
+            '/camera/transform',
+            serialize_message(msg),
+            nanos
+        )
 
 
 def writeVideo(bagWriter: SequentialWriter, videoPath: PurePosixPath, lineUpTime: float, lineupFrame: int):
@@ -177,15 +238,58 @@ def writeVideo(bagWriter: SequentialWriter, videoPath: PurePosixPath, lineUpTime
 
     # Get video framerate
     frameRate = videoReader.get(cv.CAP_PROP_FPS)
-    print("Framerate: " + str(frameRate))
 
     # Get the frame count
     frameCount = int(videoReader.get(cv.CAP_PROP_FRAME_COUNT))
 
-    for frameId in tqdm(range(frameCount)): ret, frame = videoReader.read()
+    # Get frame dimensions
+    frameWidth = int(videoReader.get(cv.CAP_PROP_FRAME_WIDTH))
+    frameHeight = int(videoReader.get(cv.CAP_PROP_FRAME_HEIGHT))
 
+    print("Writing Images to Bag:")
 
-    
+    for frameId in tqdm(range(frameCount)): 
+        
+        # Read the image and convert it to black and white
+        ret, frame = videoReader.read()
+
+        frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+        frame = (np.reshape(frame, (frameWidth*frameHeight))).tolist()
+
+        # Check if the frame was returned
+        if not ret: continue
+
+        # Compute image timestamp based on lineup frame and framerate
+        t = ((frameId - lineupFrame) / frameRate) + lineUpTime
+
+        if t < 0: continue
+
+        seconds = np.floor(t)
+        nanos = (t - seconds) * 1e9
+
+        msg = Image()
+
+        msg.data = frame
+
+        # Image format info
+        msg.height = frameHeight
+        msg.width = frameWidth
+        msg.step = frameWidth * 8 # Number of bytes in rows
+        msg.encoding = 'mono8'
+
+        # Header info
+        msg.header.stamp.sec = int(seconds)
+        msg.header.stamp.nanosec = int(nanos)
+        msg.header.frame_id = 'camera'
+
+        nanos = int(nanos + int(seconds * 1e9))
+
+        bagWriter.write(
+            '/camera/ir/image',
+            serialize_message(msg),
+            nanos
+        )
+
     # Close the video
     videoReader.release()
 
@@ -351,6 +455,7 @@ def main(csvPath: PurePosixPath, mp4Path: PurePosixPath, lineUpTime: float, line
     writeVehiclePosition(bagWriter, vehicleLocalPosition)
 
     # Write Gimbal Transform
+    writeVideoTransform(bagWriter, vehicleAttitude, actuatorOutput)
 
     # Write Video
     writeVideo(bagWriter, mp4Path, lineUpTime, lineUpFrame)

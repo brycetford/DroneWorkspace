@@ -1,6 +1,3 @@
-[submodule "src/px4_msgs"]
-	path = src/px4_msgs
-	url = https://github.com/PX4/px4_msgs.git
 [submodule "src/gz_uas_sim"]
 	path = src/gz_uas_sim
 	url = git@github.com:laddcs/gz_uas_sim.git
@@ -9,3 +6,15 @@
 	path = src/uas_test
 	url = git@github.com:laddcs/uas_test.git
 	branch = main
+[submodule "src/external/manif"]
+	path = src/external/manif
+	url = https://github.com/artivis/manif.git
+[submodule "src/external/g2o"]
+	path = src/external/g2o
+	url = https://github.com/RainerKuemmerle/g2o.git
+[submodule "src/external/px4_ros_com"]
+	path = src/external/px4_ros_com
+	url = https://github.com/PX4/px4_ros_com.git
+[submodule "src/external/px4_msgs"]
+	path = src/external/px4_msgs
+	url = https://github.com/PX4/px4_msgs.git

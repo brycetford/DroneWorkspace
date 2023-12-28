@@ -7,7 +7,9 @@
                 "/opt/ros/humble/include/**",
                 "${workspaceFolder}/install/**",
                 "${workspaceFolder}/uas_test/sam_demo/sam_node/include/**",
-                "/usr/include/eigen3"
+                "/usr/include/eigen3",
+                "/opt/ros/humble/include/rclcpp_components",
+                "${workspaceFolder}/gz_uas_sim/bluebird_log_interface/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
