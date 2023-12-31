@@ -172,10 +172,35 @@ def writeVideoTransform(bagWriter: SequentialWriter, vehicleAttitude, actuatorOu
     minPitchCommand = 1000
     maxPitchCommand = 1500
 
-    minPitchAngle = -90
+    minPitchAngle = -np.pi / 2
     maxPitchAngle = 0
 
-    gimbalRotationMessageList = []
+    pitchList = []
+    pitchTime = []
+
+    yawList = []
+    yawTime = []
+    
+    with open(file=vehicleAttitude, mode='r', newline='') as csvfile:
+
+        reader = csv.DictReader(csvfile)
+
+        # Read all rows and create Attitude msgs for rows
+        for row in reader: 
+
+            q = np.zeros(4)
+            q[0] = float(row['q[0]'])
+            q[1] = float(row['q[1]'])
+            q[2] = float(row['q[2]'])
+            q[3] = float(row['q[3]'])
+
+            yaw = np.arctan2(
+                2*(q[0]*q[3] + q[1]*q[2]),
+                -1 + 2*(q[0]*q[0] + q[1]*q[1])
+            )
+
+            yawList.append(yaw)
+            yawTime.append(int(row['timestamp_sample']))
 
     with open(file=actuatorOutput, mode='r', newline='') as csvfile:
 
@@ -188,37 +213,46 @@ def writeVideoTransform(bagWriter: SequentialWriter, vehicleAttitude, actuatorOu
             if gimablPitchCommand == 0.0: continue
 
             # Linear interpolation between pitch command and pitch angle
-            gimbalPitchAngle = (gimablPitchCommand - minPitchCommand) / (maxPitchCommand - minPitchCommand) * (maxPitchAngle - minPitchAngle) + minPitchAngle
+            pitch = (gimablPitchCommand - minPitchCommand) / (maxPitchCommand - minPitchCommand) * (maxPitchAngle - minPitchAngle) + minPitchAngle
 
-            gimbalQ = np.zeros(4)
-
-            gimbalQ[0] = np.cos(0)*np.cos(gimbalPitchAngle/2)*np.cos(0) + np.sin(0)*np.sin(gimbalPitchAngle/2)*np.sin(0)
-            gimbalQ[1] = np.sin(0)*np.cos(gimbalPitchAngle/2)*np.cos(0) - np.cos(0)*np.sin(gimbalPitchAngle/2)*np.sin(0)
-            gimbalQ[2] = np.cos(0)*np.sin(gimbalPitchAngle/2)*np.cos(0) + np.sin(0)*np.cos(gimbalPitchAngle/2)*np.sin(0)
-            gimbalQ[3] = np.cos(0)*np.cos(gimbalPitchAngle/2)*np.sin(0) - np.sin(0)*np.sin(gimbalPitchAngle/2)*np.sin(0)
-
-            t = float(row['timestamp'])*1e-6
-            seconds = np.floor(t)
-            nanos = (t - seconds) * 1e9
-            
-            msg = QuaternionStamped()
-
-            # Relative rotation as quaternion
-            msg.quaternion.w = gimbalQ[0]
-            msg.quaternion.x = gimbalQ[1]
-            msg.quaternion.y = gimbalQ[2]
-            msg.quaternion.z = gimbalQ[3]
-
-            # Header info
-            msg.header.stamp.sec = int(seconds)
-            msg.header.stamp.nanosec = int(nanos)
-            msg.header.frame_id = 'body_camera'
-
-            gimbalRotationMessageList.append(msg)
+            pitchList.append(pitch)
+            pitchTime.append(int(row['timestamp']))
     
     print("Writing Gimbal Transform to Bag:")
 
-    for msg in tqdm(gimbalRotationMessageList):    
+    yawTime = np.array(yawTime)
+    pitchTime = np.array(pitchTime)
+
+    for yawTimeIndex in tqdm(range(len(yawTime))):    
+
+        pitchTimeIndex = np.argmin(np.abs(pitchTime - yawTime[yawTimeIndex]))
+
+        pitch = pitchList[pitchTimeIndex]
+        yaw = yawList[yawTimeIndex]
+
+        gimbalQ = np.zeros(4)
+
+        gimbalQ[0] = np.cos(0)*np.cos(pitch/2)*np.cos(yaw/2) + np.sin(0)*np.sin(pitch/2)*np.sin(yaw/2)
+        gimbalQ[1] = np.sin(0)*np.cos(pitch/2)*np.cos(yaw/2) - np.cos(0)*np.sin(pitch/2)*np.sin(yaw/2)
+        gimbalQ[2] = np.cos(0)*np.sin(pitch/2)*np.cos(yaw/2) + np.sin(0)*np.cos(pitch/2)*np.sin(yaw/2)
+        gimbalQ[3] = np.cos(0)*np.cos(pitch/2)*np.sin(yaw/2) - np.sin(0)*np.sin(pitch/2)*np.cos(yaw/2)
+
+        t = float(yawTime[yawTimeIndex])*1e-6
+        seconds = np.floor(t)
+        nanos = (t - seconds) * 1e9
+
+        msg = QuaternionStamped()
+
+        # Relative rotation as quaternion
+        msg.quaternion.w = gimbalQ[0]
+        msg.quaternion.x = gimbalQ[1]
+        msg.quaternion.y = gimbalQ[2]
+        msg.quaternion.z = gimbalQ[3]
+
+        # Header info
+        msg.header.stamp.sec = int(seconds)
+        msg.header.stamp.nanosec = int(nanos)
+        msg.header.frame_id = 'body_camera'
 
         nanos = msg.header.stamp.nanosec + int(msg.header.stamp.sec * 1e9)
 
