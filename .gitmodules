@@ -21,3 +21,6 @@
 [submodule "gSDK"]
 	path = src/external/gSDK
 	url = git@github.com:brycetford/gSDK.git
+[submodule "src/HardwareManagers"]
+	path = src/HardwareManagers
+	url = git@github.com:laddcs/HardwareManagers.git
