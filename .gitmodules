@@ -18,6 +18,3 @@
 [submodule "src/external/px4_msgs"]
 	path = src/external/px4_msgs
 	url = https://github.com/PX4/px4_msgs.git
-[submodule "gsdk"]
-	path = src/external/gSDK
-	url = https://github.com/brycetford/gSDK.git
