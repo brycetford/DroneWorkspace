@@ -22,6 +22,7 @@ services:
     devices:
       - /dev/dri/renderD128:/dev/dri/renderD128
       - /dev/dri/card0:/dev/dri/card0
+      - /dev/ttyUSB0:/dev/ttyUSB0
     volumes:
       # Allows graphical programs in the container.
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
@@ -51,7 +52,7 @@ services:
         - GID=${UID:-1000}
         - USERNAME=${USERNAME:-devuser}
     volumes:
-      - ./firmware/PX4-Autopilot:/firmware/PX4-Autopilot/:rw
+      - ./firmware:/firmware:rw
       - ./src:/DroneWorkspace:rw
       # VSCode settings for container development
       - ./vscodesettings:/DroneWorkspace/.vscode:rw
