@@ -10,7 +10,7 @@
                 "/usr/include/eigen3",
                 "/opt/ros/humble/include/rclcpp_components",
                 "${workspaceFolder}/gz_uas_sim/bluebird_log_interface/include",
-                "${workspaceFolder}/external/gSDK/include"
+                "${workspaceFolder}/external/gSDK/include/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
