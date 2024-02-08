@@ -29,9 +29,9 @@ services:
       - /dev/dri/renderD128:/dev/dri/renderD128
       - /dev/dri/card0:/dev/dri/card0
       
-      - type: bind
-        source: /dev/ttyUSB0
-        target: /dev/ttyUSB0
+#      - type: bind
+#        source: /dev/ttyUSB0
+#        target: /dev/ttyUSB0
 
   # Overlay Container
   overlay:

@@ -2,8 +2,6 @@
 .vscode/
 **/__pycache__/
 
-
-PX4-Autopilot/
 build/
 install/
 log/
