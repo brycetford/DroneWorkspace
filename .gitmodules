@@ -24,3 +24,6 @@
 [submodule "src/HardwareManagers"]
 	path = src/HardwareManagers
 	url = git@github.com:laddcs/HardwareManagers.git
+[submodule "PX4-Autopilot"]
+	path = firmware/PX4-Autopilot
+	url = git@github.com:laddcs/PX4-Autopilot.git
