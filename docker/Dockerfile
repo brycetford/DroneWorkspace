@@ -85,6 +85,16 @@ RUN wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pk
 	&& apt-get --quiet --no-install-recommends -y install lsb-release wget gnupg \
     && apt-get --quiet --no-install-recommends -y install gz-${GZ_VERSION} ros-${ROS_DISTRO}-ros-gzgarden
 
+# Install libirmanager from evocortex
+WORKDIR /tmp
+RUN sudo apt-get install -y --no-install-recommends\
+        cmake \
+		build-essential \
+        freeglut3-dev && \
+	wget http://ftp.evocortex.com/libirimager-8.9.0-amd64.deb && \
+	dpkg -i libirimager-8.9.0-amd64.deb
+WORKDIR /
+
 # Some QT-Apps/Gazebo don't not show controls without this
 ENV QT_X11_NO_MITSHM 1
 
