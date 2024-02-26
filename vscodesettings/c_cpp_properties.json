@@ -12,7 +12,8 @@
                 "${workspaceFolder}/gz_uas_sim/bluebird_log_interface/include",
                 "${workspaceFolder}/external/gSDK/include/**",
                 "${workspaceFolder}/HardwareManagers/gimbal_manager/include",
-                "/usr/include/libirimager"
+                "/usr/include/libirimager",
+                "${workspaceFolder}/HardwareManagers/ircamera_manager/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
