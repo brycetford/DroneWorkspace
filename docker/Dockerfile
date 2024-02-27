@@ -76,6 +76,12 @@ RUN rm -rf /usr/local/include/fastrtps /usr/local/share/fastrtps /usr/local/lib/
 	&& make && make install \
 	&& ldconfig /usr/local/lib/
 
+RUN git clone https://github.com/libuvc/libuvc /tmp/libuvc \
+	&& cd /tmp/libuvc \
+	&& mkdir build && cd build \
+	&& cmake .. \
+	&& make && sudo make install
+
 ENV GZ_VERSION garden
 
 # Install Gazebo Garden and ros_gz packages
@@ -139,7 +145,8 @@ RUN groupadd --gid $GID $USERNAME \
  && chmod 0440 /etc/sudoers.d/${USERNAME} \
  && mkdir -p /home/${USERNAME} \
  && chown -R ${UID}:${GID} /home/${USERNAME} \ 
- && usermod -a -G dialout ${USERNAME}
+ && usermod -a -G dialout ${USERNAME} \
+ && usermod -a -G video ${USERNAME}
 
  # Set the ownership of the overlay workspace to the new user
 RUN chown -R ${UID}:${GID} /DroneWorkspace/
