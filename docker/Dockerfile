@@ -95,10 +95,13 @@ RUN wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pk
 WORKDIR /tmp
 RUN sudo apt-get install -y --no-install-recommends\
         cmake \
+		udev \
+		kmod \
 		build-essential \
-        freeglut3-dev && \
-	wget http://ftp.evocortex.com/libirimager-8.9.0-amd64.deb && \
-	dpkg -i libirimager-8.9.0-amd64.deb
+        freeglut3-dev \
+	&& wget http://ftp.evocortex.com/libirimager-8.9.0-amd64.deb \
+	&& bash -c 'echo "options uvcvideo nodrop=1" > /etc/modprobe.d/uvcvideo.conf' \
+	&& dpkg -i libirimager-8.9.0-amd64.deb
 WORKDIR /
 
 # Some QT-Apps/Gazebo don't not show controls without this
@@ -152,6 +155,7 @@ RUN groupadd --gid $GID $USERNAME \
 RUN chown -R ${UID}:${GID} /DroneWorkspace/
 RUN chown -R ${UID}:${GID} /firmware/
 RUN chown -R ${UID}:${GID} /tmp/runtime-root
+RUN sudo bash -c 'echo "options uvcvideo nodrop=1" > /etc/modprobe.d/uvcvideo.conf'
 
 # Add ros source to bashrc so it is set up for dec container
 RUN echo "source /opt/ros/humble/setup.bash" >> /home/${USERNAME}/.bashrc
