@@ -13,7 +13,9 @@
                 "${workspaceFolder}/external/gSDK/include/**",
                 "${workspaceFolder}/HardwareManagers/gimbal_manager/include",
                 "/usr/include/libirimager",
-                "${workspaceFolder}/HardwareManagers/ircamera_manager/include"
+                "${workspaceFolder}/HardwareManagers/ircamera_manager/include",
+                "/opt/ros/humble/include/rosbag2_cpp",
+                "${workspaceFolder}/HardwareManagers/logger/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
