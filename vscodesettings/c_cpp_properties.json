@@ -15,7 +15,10 @@
                 "/usr/include/libirimager",
                 "${workspaceFolder}/HardwareManagers/ircamera_manager/include",
                 "/opt/ros/humble/include/rosbag2_cpp",
-                "${workspaceFolder}/HardwareManagers/logger/include"
+                "${workspaceFolder}/HardwareManagers/logger/include",
+                "${workspaceFolder}/install/px4_msgs/include/**",
+                "${workspaceFolder}/install",
+                "${workspaceFolder}/install/hardware_msgs/include/hardware_msgs"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
