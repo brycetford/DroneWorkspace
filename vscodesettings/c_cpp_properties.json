@@ -18,7 +18,8 @@
                 "${workspaceFolder}/HardwareManagers/logger/include",
                 "${workspaceFolder}/install/px4_msgs/include/**",
                 "${workspaceFolder}/install",
-                "${workspaceFolder}/install/hardware_msgs/include/hardware_msgs"
+                "${workspaceFolder}/install/hardware_msgs/include/hardware_msgs",
+                "${workspaceFolder}/build/px4_msgs/rosidl_generator_cpp"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
