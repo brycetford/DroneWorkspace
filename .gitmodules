@@ -18,6 +18,7 @@
 [submodule "src/external/px4_msgs"]
 	path = src/external/px4_msgs
 	url = https://github.com/PX4/px4_msgs.git
+	branch = release/1.14
 [submodule "gSDK"]
 	path = src/external/gSDK
 	url = git@github.com:brycetford/gSDK.git
