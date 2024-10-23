@@ -100,7 +100,7 @@ RUN sudo apt-get install -y --no-install-recommends\
 		build-essential \
         freeglut3-dev \
 	&& wget http://ftp.evocortex.com/libirimager-8.9.0-amd64.deb \
-	&& bash -c 'echo "options uvcvideo nodrop=1" > /etc/modprobe.d/uvcvideo.conf' \
+ 	&& bash -c 'echo "options uvcvideo nodrop=1" > /etc/modprobe.d/uvcvideo.conf' \
 	&& dpkg -i libirimager-8.9.0-amd64.deb
 WORKDIR /
 
